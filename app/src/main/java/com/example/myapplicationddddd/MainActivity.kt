@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var permissionManager: PermissionManager
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        val recycler_view = findViewById<Button>(R.id.baba)
+     /*   val recycler_view = findViewById<Button>(R.id.baba)
 
         //define textview
 
@@ -32,6 +33,13 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "İzin zaten verilmiş", Toast.LENGTH_SHORT).show()
 
             }
+        }*/
+
+        permissionManager = PermissionManager(this)
+
+        val recycler_view = findViewById<Button>(R.id.baba)
+        recycler_view.setOnClickListener {
+            permissionManager.checkDrawOverlayPermission()
         }
     }
 
@@ -39,21 +47,11 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1) {
-            if (Settings.canDrawOverlays(this)) {
-                // İzin verildiğinde yapılacaklar
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            } else {
-                // İzin verilmediğinde yapılacaklar
-                Toast.makeText(this, "Lütfen izin veriniz", Toast.LENGTH_SHORT).show()
-
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
+        super.onActivityResult(requestCode, resultCode, data)
+        permissionManager.onPermissionResult(requestCode, resultCode, data)
     }
+
+
 }
 
 
